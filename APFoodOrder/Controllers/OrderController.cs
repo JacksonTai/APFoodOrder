@@ -16,9 +16,9 @@ namespace APFoodOrder.Controllers
         private readonly IOrderService _orderService = orderService;
 
         [HttpPost(Name = "CreateOrder")]
-        public Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestModel createOrderRequestModel)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestModel createOrderRequestModel)
         {
-            return Task.FromResult<IActionResult>(Ok(_orderService.CreateOrder(createOrderRequestModel)));
+            return Ok(await _orderService.CreateOrder(createOrderRequestModel));
         }
 
         [HttpPut("{id}", Name = "UpdateOrderStatus")]

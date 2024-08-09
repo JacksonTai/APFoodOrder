@@ -1,6 +1,6 @@
 ﻿using APFoodOrder.Constants;
 
-namespace APFood.Entity
+namespace APFoodOrder.Entity
 {
     public class DeliveryTask
     {

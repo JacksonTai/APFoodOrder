@@ -1,8 +1,8 @@
 ﻿
 using APFoodOrder.Constant;
-using APFoodOrder.Entity;
+using System.Text.Json.Serialization;
 
-namespace APFood.Entity
+namespace APFoodOrder.Entity
 {
     public class Order
     {

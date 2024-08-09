@@ -1,12 +1,12 @@
-﻿using APFood.Entity;
-using APFoodOrder.Constant;
+﻿using APFoodOrder.Constant;
+using APFoodOrder.Entity;
 using APFoodOrder.Model;
 
 namespace APFoodOrder.Service
 {
     public interface IOrderService
     {
-        Task<Order> CreateOrder(CreateOrderRequestModel createOrderRequestModel);
+        Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequestModel);
         Task UpdateOrderStatusAsync(int orderId, OrderStatus newStatus);
         Task<Order?> GetOrderByIdAsync(int orderId);
         Task<List<OrderListViewModel>> GetOrdersByStatusAsync(OrderStatus status, string? customerId);

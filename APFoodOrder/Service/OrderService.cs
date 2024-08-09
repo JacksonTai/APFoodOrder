@@ -1,5 +1,4 @@
-﻿using APFood.Entity;
-using APFoodOrder.Constant;
+﻿using APFoodOrder.Constant;
 using APFoodOrder.Constants;
 using APFoodOrder.Data;
 using APFoodOrder.Entity;
@@ -14,10 +13,29 @@ namespace APFoodOrder.Service
     {
         private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-        public async Task<Order> CreateOrder(CreateOrderRequestModel createOrderRequestModel)
+        public async Task<CreateOrderResponseModel> CreateOrder(CreateOrderRequestModel createOrderRequestModel)
         {
-            Cart cart = createOrderRequestModel.Cart;
             DineInOption dineInOption = createOrderRequestModel.DineInOption;
+            int cartId = createOrderRequestModel.CartId;
+
+            Cart cart = await _context.Carts
+                   .Include(c => c.Items)
+                   .ThenInclude(ci => ci.Food)
+                   .Include(c => c.Customer)
+                   .FirstOrDefaultAsync(c => c.Id == cartId) ?? throw new InvalidOperationException("Cart not found");
+
+            if (cart.Items == null || !cart.Items.Any())
+            {
+                throw new InvalidOperationException("Cart has no items");
+            }
+
+            var foodIds = cart.Items.Select(ci => ci.FoodId).ToList();
+            var foods = await _context.Foods.Where(f => foodIds.Contains(f.Id)).ToListAsync();
+            if (foods.Count != foodIds.Count)
+            {
+                throw new InvalidOperationException("Some food items not found");
+            }
+
             Order order = new()
             {
                 CustomerId = cart.CustomerId,
@@ -25,15 +43,21 @@ namespace APFoodOrder.Service
                 Items = cart.Items.Select(ci => new OrderItem
                 {
                     FoodId = ci.FoodId,
-                    Food = ci.Food,
+                    Food = foods.First(f => f.Id == ci.FoodId),
                     Quantity = ci.Quantity
                 }).ToList(),
                 Status = OrderStatus.Pending,
                 DineInOption = dineInOption,
             };
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return order;
+
+            return new CreateOrderResponseModel
+            {
+                OrderId = order.Id,
+                QueueNumber = order.QueueNumber
+            };
         }
 
         public async Task UpdateOrderStatusAsync(int orderId, OrderStatus newStatus)
@@ -47,6 +71,7 @@ namespace APFoodOrder.Service
         {
             return await _context.Orders
                .Include(o => o.Items)
+               .ThenInclude(i => i.Food)
                .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
@@ -137,6 +162,6 @@ namespace APFoodOrder.Service
             return orderStatus == OrderStatus.Ready &&
                    (deliveryStatus != null && deliveryStatus == DeliveryStatus.Delivered);
         }
-     
+
     }
 }

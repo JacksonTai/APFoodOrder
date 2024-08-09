@@ -1,16 +1,11 @@
-﻿using APFood.Entity;
-using APFoodOrder.Entity;
+﻿using APFoodOrder.Entity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace APFoodOrder.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<APFoodUser>(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
-
         public DbSet<FoodVendor> FoodVendors { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Food> Foods { get; set; }

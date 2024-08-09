@@ -1,8 +1,7 @@
 ﻿
 using APFoodOrder.Constants;
-using APFoodOrder.Entity;
 
-namespace APFood.Entity
+namespace APFoodOrder.Entity
 {
     public class RunnerDeliveryTask
     {

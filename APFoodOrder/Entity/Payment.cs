@@ -1,6 +1,4 @@
-﻿using APFood.Entity;
-
-namespace APFoodOrder.Entity
+﻿namespace APFoodOrder.Entity
 {
     public class Payment
     {

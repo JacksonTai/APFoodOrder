@@ -1,7 +1,5 @@
-﻿using APFood.Entity;
-using APFoodOrder.Entity;
-
-namespace APFood.Entity
+﻿
+namespace APFoodOrder.Entity
 {
     public class OrderItem
     {
